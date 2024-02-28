@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"testPaymentSystem/internal/domain"
 	"testPaymentSystem/internal/repository"
+	"time"
 )
 
 type AccountService struct {
@@ -21,11 +22,12 @@ func (a *AccountService) generateAccountNumber() string {
 	nationPrefix := "BY09"
 	codeBank := "CBDC"
 	sortCode := 709080
+	solt := "100500"
 
 	minR := 10000000
 	maxR := 99999999
 	accountNumber := rand.Intn(maxR-minR) + minR
-	return nationPrefix + codeBank + strconv.Itoa(sortCode) + strconv.Itoa(accountNumber)
+	return nationPrefix + codeBank + solt + strconv.Itoa(sortCode) + strconv.Itoa(accountNumber)
 }
 
 func (a *AccountService) checkAccountExist(accountNumber string) bool {
@@ -41,6 +43,12 @@ func (a *AccountService) NewAccount() (domain.PaymentDTO, error) {
 	}
 	account := domain.PaymentDTO{
 		AccountNumber: accountNumber,
+		Balance:       0,
+		Active:        true,
+		Currency:      "BYN",
+		Limits:        false,
+		CreatedAt:     time.Now().Format("2006-01-02 15:04:05"),
+		UpdatedAt:     time.Now().Format("2006-01-02 15:04:05"),
 	}
 	err := a.repository.AddAccount(account)
 	if err != nil {
@@ -51,4 +59,17 @@ func (a *AccountService) NewAccount() (domain.PaymentDTO, error) {
 
 func (a *AccountService) GetAccounts() []domain.PaymentDTO {
 	return a.repository.GetAccounts()
+}
+
+func (a *AccountService) Replenishment(accountNumber string, sum float64) (float64, error) {
+	account, ok := a.repository.GetAccount(accountNumber)
+	if !ok {
+		return 0, nil
+	}
+	account.Balance += sum
+	err := a.repository.AddAccount(account)
+	if err != nil {
+		return 0, err
+	}
+	return account.Balance, nil
 }

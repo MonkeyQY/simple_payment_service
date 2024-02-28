@@ -101,8 +101,115 @@ func TestPaymentService_transactionValidation(t *testing.T) {
 		want    bool
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test Special account",
+			fields: fields{
+				repository: &repository.AccountRepository{},
+				config:     &configs.Config{},
+			},
+			args: args{
+				accountFrom: domain.PaymentDTO{
+					AccountNumber: "BY04CBDC36029110100040000000",
+					Balance:       100,
+					Active:        true,
+					Currency:      "BYN",
+					Limits:        false,
+					Special:       true,
+				},
+				accountTo: domain.PaymentDTO{
+					AccountNumber: "BY04CBDC36029110100040000001",
+					Balance:       100,
+					Active:        true,
+					Currency:      "BYN",
+					Limits:        false,
+					Special:       true,
+				},
+				sum: 50,
+			},
+			want:    false,
+			wantErr: true,
+		},
+		{
+			name: "Test Success transaction validation",
+			fields: fields{
+				repository: &repository.AccountRepository{},
+				config:     &configs.Config{},
+			},
+			args: args{
+				accountFrom: domain.PaymentDTO{
+					AccountNumber: "BY04CBDC36029110100040000000",
+					Balance:       100,
+					Active:        true,
+					Currency:      "BYN",
+					Limits:        false,
+				},
+				accountTo: domain.PaymentDTO{
+					AccountNumber: "BY04CBDC36029110100040000001",
+					Balance:       100,
+					Active:        true,
+					Currency:      "BYN",
+					Limits:        false,
+				},
+				sum: 50,
+			},
+			want:    true,
+			wantErr: false,
+		},
+		{
+			// Test InActive account
+			name: "Test InActive account",
+			fields: fields{
+				repository: &repository.AccountRepository{},
+				config:     &configs.Config{},
+			},
+			args: args{
+				accountFrom: domain.PaymentDTO{
+					AccountNumber: "BY04CBDC36029110100040000000",
+					Balance:       100,
+					Active:        false,
+					Currency:      "BYN",
+					Limits:        false,
+				},
+				accountTo: domain.PaymentDTO{
+					AccountNumber: "BY04CBDC36029110100040000001",
+					Balance:       100,
+					Active:        true,
+					Currency:      "BYN",
+					Limits:        false,
+				},
+				sum: 50,
+			},
+			want:    false,
+			wantErr: true,
+		},
+		{
+			name: "Test enough money",
+			fields: fields{
+				repository: &repository.AccountRepository{},
+				config:     &configs.Config{},
+			},
+			args: args{
+				accountFrom: domain.PaymentDTO{
+					AccountNumber: "BY04CBDC36029110100040000000",
+					Balance:       0,
+					Active:        true,
+					Currency:      "BYN",
+					Limits:        false,
+				},
+				accountTo: domain.PaymentDTO{
+					AccountNumber: "BY04CBDC36029110100040000001",
+					Balance:       100,
+					Active:        true,
+					Currency:      "BYN",
+					Limits:        false,
+				},
+				sum: 100,
+			},
+			want:    false,
+			wantErr: true,
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &PaymentService{

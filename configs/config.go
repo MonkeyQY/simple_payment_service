@@ -25,11 +25,11 @@ func (c *Config) NewConfig() Config {
 	}
 }
 
+// NewConfig - создание конфига. Можно использовать вайпер или из других файлов...
 func NewConfig() *Config {
 	once.Do(func() {
 		config = config.NewConfig()
 		thisLocation, err := os.Getwd()
-		fmt.Println(thisLocation)
 		file, err := os.ReadFile(thisLocation + "/" + "settings.xml")
 		if err != nil {
 			log.Println("Error read file")
