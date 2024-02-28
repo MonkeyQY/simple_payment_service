@@ -18,6 +18,7 @@ func (s *EmissionSpecialAccountService) GetAccountNumber() string {
 	return "BY04CBDC36029110100040000000"
 }
 
+// Add - пополнение счета для "Эмиссии"
 func (s *EmissionSpecialAccountService) Add(sum float64) (float64, error) {
 	nationAccount, ok := s.repository.GetAccount("BY04CBDC36029110100040000000")
 	if !ok {

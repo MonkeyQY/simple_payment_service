@@ -3,6 +3,7 @@ package repository
 import (
 	"testPaymentSystem/internal/db"
 	"testPaymentSystem/internal/domain"
+	"time"
 )
 
 // Error может быть вызвана в реальном приложении при работе с реальной базой данных
@@ -18,6 +19,7 @@ func NewAccountRepository(db *db.DB) *AccountRepository {
 }
 
 func (d *AccountRepository) AddAccount(account domain.PaymentDTO) error {
+	account.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
 	d.Db.Accounts[account.AccountNumber] = account
 	return nil
 }
@@ -45,6 +47,9 @@ func (d *AccountRepository) TransferMoney(
 	// Работает это по-другому, но нужно понимать, что важно обработать ошибку
 	oldValueFrom := d.Db.Accounts[accountFrom.AccountNumber]
 	oldValueTo := d.Db.Accounts[accountTo.AccountNumber]
+
+	accountFrom.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+	accountTo.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
 
 	d.Db.Accounts[accountFrom.AccountNumber] = accountFrom
 	k := d.Db.Accounts[accountTo.AccountNumber]

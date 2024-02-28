@@ -63,7 +63,7 @@ func (p *PaymentService) Send(
 	// open transaction
 	accountFrom, accountTo, ok := p.getAccounts(accountNumberFrom, accountNumberTo)
 	if !ok {
-		return false, nil
+		return false, errors.New("Account not found")
 	}
 	isValid, err := p.transactionValidation(accountFrom, accountTo, sum)
 	if !isValid {

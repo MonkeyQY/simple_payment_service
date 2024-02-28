@@ -6,6 +6,7 @@ import "testPaymentSystem/internal/domain"
 type Account interface {
 	NewAccount() (domain.PaymentDTO, error)
 	GetAccounts() []domain.PaymentDTO
+	Replenishment(accountNumber string, sum float64) (float64, error)
 }
 
 type SpecialAccount interface {
@@ -70,6 +71,7 @@ func (p *PaymentSystem) Transfer(
 	return ok, nil
 }
 
+// TransferWithMap - метод для трансфера с использованием json
 func (p *PaymentSystem) TransferWithMap(data map[string]interface{}) (bool, error) {
 	accountNumberFrom, ok := data["accountNumberFrom"].(string)
 	if !ok {
@@ -96,4 +98,8 @@ func (p *PaymentSystem) CreateNewAccount() (string, error) {
 		return "", err
 	}
 	return account.AccountNumber, nil
+}
+
+func (p *PaymentSystem) Replenishment(accountNumber string, sum float64) (float64, error) {
+	return p.accountService.Replenishment(accountNumber, sum)
 }
