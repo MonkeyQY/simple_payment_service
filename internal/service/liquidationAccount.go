@@ -1,9 +1,7 @@
 package service
 
-import "testPaymentSystem/internal/repository"
-
 type LiquidationSpecialAccountService struct {
-	repository *repository.AccountRepository
+	repository AccountRepository
 }
 
 func (s *LiquidationSpecialAccountService) GetAccountNumber() string {
@@ -25,7 +23,7 @@ func (s *LiquidationSpecialAccountService) Add(sum float64) (float64, error) {
 }
 
 func NewLiquidationSpecialAccountService(
-	repository *repository.AccountRepository,
+	repository AccountRepository,
 ) *LiquidationSpecialAccountService {
 	return &LiquidationSpecialAccountService{
 		repository: repository,

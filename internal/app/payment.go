@@ -10,7 +10,14 @@ import (
 	"time"
 )
 
-func CreateSpecialAccounts(accountRepository *repository.AccountRepository, config *configs.Config) error {
+type PaymentSystemRepository interface {
+	TransferMoney(accountFrom domain.PaymentDTO, accountTo domain.PaymentDTO) (bool, error)
+	GetAccount(accountNumber string) (domain.PaymentDTO, bool)
+	GetAccounts() []domain.PaymentDTO
+	AddAccount(account domain.PaymentDTO) error
+}
+
+func CreateSpecialAccounts(accountRepository PaymentSystemRepository, config *configs.Config) error {
 	nationAccount := domain.PaymentDTO{
 		Special:       true,
 		AccountNumber: config.NationalAccountNumber,
@@ -41,7 +48,7 @@ func CreateSpecialAccounts(accountRepository *repository.AccountRepository, conf
 	return nil
 }
 
-func createPaymentSystem(accountRepository *repository.AccountRepository) *service.PaymentSystem {
+func createPaymentSystem(accountRepository PaymentSystemRepository) *service.PaymentSystem {
 	paymentService := service.NewPaymentService(accountRepository)
 	emissionSpecialAccountService := service.NewEmissionSpecialAccountService(accountRepository)
 	liquidationSpecialAccountService := service.NewLiquidationSpecialAccountService(accountRepository)
@@ -103,7 +110,7 @@ func Run() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Balance acc1 after replenishment", balance)
+	fmt.Println("Balance acc1 after replenishment:", balance)
 
 	isSuccess, err := paymentSystemService.Transfer(acc1, acc2, 100)
 	if err != nil {
@@ -122,5 +129,10 @@ func Run() {
 		fmt.Println(err)
 	}
 	fmt.Println("Transfer result:", isSuccess)
+
+	accounts = paymentSystemService.GetAllAccounts()
+	for _, account := range accounts {
+		fmt.Printf("%+v \n", account)
+	}
 
 }

@@ -4,15 +4,20 @@ import (
 	"math/rand"
 	"strconv"
 	"testPaymentSystem/internal/domain"
-	"testPaymentSystem/internal/repository"
 	"time"
 )
 
-type AccountService struct {
-	repository *repository.AccountRepository
+type AccountRepository interface {
+	AddAccount(account domain.PaymentDTO) error
+	GetAccount(accountNumber string) (domain.PaymentDTO, bool)
+	GetAccounts() []domain.PaymentDTO
 }
 
-func NewAccountService(repository *repository.AccountRepository) *AccountService {
+type AccountService struct {
+	repository AccountRepository
+}
+
+func NewAccountService(repository AccountRepository) *AccountService {
 	return &AccountService{
 		repository: repository,
 	}
