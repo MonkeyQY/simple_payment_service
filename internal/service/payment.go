@@ -4,15 +4,19 @@ import (
 	"errors"
 	"testPaymentSystem/configs"
 	"testPaymentSystem/internal/domain"
-	"testPaymentSystem/internal/repository"
 )
 
+type PaymentRepository interface {
+	TransferMoney(accountFrom domain.PaymentDTO, accountTo domain.PaymentDTO) (bool, error)
+	GetAccount(accountNumber string) (domain.PaymentDTO, bool)
+}
+
 type PaymentService struct {
-	repository *repository.AccountRepository
+	repository PaymentRepository
 	config     *configs.Config
 }
 
-func NewPaymentService(repository *repository.AccountRepository) *PaymentService {
+func NewPaymentService(repository PaymentRepository) *PaymentService {
 	return &PaymentService{
 		repository: repository,
 	}

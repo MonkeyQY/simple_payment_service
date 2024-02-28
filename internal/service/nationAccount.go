@@ -1,13 +1,11 @@
 package service
 
-import "testPaymentSystem/internal/repository"
-
 type EmissionSpecialAccountService struct {
-	repository *repository.AccountRepository
+	repository AccountRepository
 }
 
 func NewEmissionSpecialAccountService(
-	repository *repository.AccountRepository,
+	repository AccountRepository,
 ) *EmissionSpecialAccountService {
 	return &EmissionSpecialAccountService{
 		repository: repository,

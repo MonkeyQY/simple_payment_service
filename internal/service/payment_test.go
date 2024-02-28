@@ -3,47 +3,12 @@ package service
 import (
 	"reflect"
 	"testPaymentSystem/configs"
+	"testPaymentSystem/internal/db"
 	"testPaymentSystem/internal/domain"
 	"testPaymentSystem/internal/repository"
 	"testing"
+	"time"
 )
-
-func TestPaymentService_Send(t *testing.T) {
-	type fields struct {
-		repository *repository.AccountRepository
-		config     *configs.Config
-	}
-	type args struct {
-		accountNumberFrom string
-		accountNumberTo   string
-		sum               float64
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    bool
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			p := &PaymentService{
-				repository: tt.fields.repository,
-				config:     tt.fields.config,
-			}
-			got, err := p.Send(tt.args.accountNumberFrom, tt.args.accountNumberTo, tt.args.sum)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Send() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("Send() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestPaymentService_getAccounts(t *testing.T) {
 	type fields struct {
@@ -54,6 +19,30 @@ func TestPaymentService_getAccounts(t *testing.T) {
 		accountNumberFrom string
 		accountNumberTo   string
 	}
+	config := configs.NewConfig()
+	repositoryInstance := repository.NewAccountRepository(db.NewDB(config))
+	acc1 := domain.PaymentDTO{
+		AccountNumber: "BY04CBDC36029110100040000000",
+		Balance:       0,
+		Active:        true,
+		Currency:      "BYN",
+		Limits:        false,
+		CreatedAt:     "2021-09-01 00:00:00",
+		UpdatedAt:     time.Now().Format("2006-01-02 15:04:05"),
+	}
+	_ = repositoryInstance.AddAccount(acc1)
+
+	acc2 := domain.PaymentDTO{
+		AccountNumber: "BY04CBDC36029110100040000001",
+		Balance:       0,
+		Active:        true,
+		Currency:      "BYN",
+		Limits:        false,
+		CreatedAt:     "2021-09-01 00:00:00",
+		UpdatedAt:     time.Now().Format("2006-01-02 15:04:05"),
+	}
+	_ = repositoryInstance.AddAccount(acc2)
+
 	tests := []struct {
 		name   string
 		fields fields
@@ -62,7 +51,20 @@ func TestPaymentService_getAccounts(t *testing.T) {
 		want1  domain.PaymentDTO
 		want2  bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test getAccounts Success",
+			fields: fields{
+				repository: repositoryInstance,
+				config:     config,
+			},
+			args: args{
+				accountNumberFrom: "BY04CBDC36029110100040000000",
+				accountNumberTo:   "BY04CBDC36029110100040000001",
+			},
+			want:  acc1,
+			want1: acc2,
+			want2: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
