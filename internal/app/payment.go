@@ -134,5 +134,6 @@ func Run() {
 	for _, account := range accounts {
 		fmt.Printf("%+v \n", account)
 	}
-
+	var goodbye string
+	fmt.Scan(&goodbye)
 }
