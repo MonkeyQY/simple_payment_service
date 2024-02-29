@@ -8,9 +8,9 @@ import (
 )
 
 type AccountRepository interface {
-	AddAccount(account domain.PaymentDTO) error
-	GetAccount(accountNumber string) (domain.PaymentDTO, bool)
-	GetAccounts() []domain.PaymentDTO
+	AddAccount(account domain.Account) error
+	GetAccount(accountNumber string) (domain.Account, bool)
+	GetAccounts() []domain.Account
 }
 
 type AccountService struct {
@@ -40,13 +40,13 @@ func (a *AccountService) checkAccountExist(accountNumber string) bool {
 	return ok
 }
 
-func (a *AccountService) NewAccount() (domain.PaymentDTO, error) {
+func (a *AccountService) NewAccount() (domain.Account, error) {
 	accountNumber := a.generateAccountNumber()
 	isExist := a.checkAccountExist(accountNumber)
 	if isExist {
 		return a.NewAccount()
 	}
-	account := domain.PaymentDTO{
+	account := domain.Account{
 		AccountNumber: accountNumber,
 		Balance:       0,
 		Active:        true,
@@ -57,12 +57,12 @@ func (a *AccountService) NewAccount() (domain.PaymentDTO, error) {
 	}
 	err := a.repository.AddAccount(account)
 	if err != nil {
-		return domain.PaymentDTO{}, err
+		return domain.Account{}, err
 	}
 	return account, nil
 }
 
-func (a *AccountService) GetAccounts() []domain.PaymentDTO {
+func (a *AccountService) GetAccounts() []domain.Account {
 	return a.repository.GetAccounts()
 }
 
