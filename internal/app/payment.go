@@ -10,14 +10,14 @@ import (
 	"time"
 )
 
-type PaymentSystemRepository interface {
+type AccountRep interface {
 	TransferMoney(accountFrom domain.PaymentDTO, accountTo domain.PaymentDTO) (bool, error)
 	GetAccount(accountNumber string) (domain.PaymentDTO, bool)
 	GetAccounts() []domain.PaymentDTO
 	AddAccount(account domain.PaymentDTO) error
 }
 
-func CreateSpecialAccounts(accountRepository PaymentSystemRepository, config *configs.Config) error {
+func CreateSpecialAccounts(accountRepository AccountRep, config *configs.Config) error {
 	nationAccount := domain.PaymentDTO{
 		Special:       true,
 		AccountNumber: config.NationalAccountNumber,
@@ -48,7 +48,7 @@ func CreateSpecialAccounts(accountRepository PaymentSystemRepository, config *co
 	return nil
 }
 
-func createPaymentSystem(accountRepository PaymentSystemRepository) *service.PaymentSystem {
+func createPaymentSystem(accountRepository AccountRep) *service.PaymentSystem {
 	paymentService := service.NewPaymentService(accountRepository)
 	emissionSpecialAccountService := service.NewEmissionSpecialAccountService(accountRepository)
 	liquidationSpecialAccountService := service.NewLiquidationSpecialAccountService(accountRepository)
