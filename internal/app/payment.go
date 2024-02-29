@@ -11,14 +11,14 @@ import (
 )
 
 type AccountRep interface {
-	TransferMoney(accountFrom domain.PaymentDTO, accountTo domain.PaymentDTO) (bool, error)
-	GetAccount(accountNumber string) (domain.PaymentDTO, bool)
-	GetAccounts() []domain.PaymentDTO
-	AddAccount(account domain.PaymentDTO) error
+	TransferMoney(accountFrom domain.Account, accountTo domain.Account) (bool, error)
+	GetAccount(accountNumber string) (domain.Account, bool)
+	GetAccounts() []domain.Account
+	AddAccount(account domain.Account) error
 }
 
 func CreateSpecialAccounts(accountRepository AccountRep, config *configs.Config) error {
-	nationAccount := domain.PaymentDTO{
+	nationAccount := domain.Account{
 		Special:       true,
 		AccountNumber: config.NationalAccountNumber,
 		Currency:      "BYN",
@@ -32,7 +32,7 @@ func CreateSpecialAccounts(accountRepository AccountRep, config *configs.Config)
 		}
 	}
 
-	liquidationAccount := domain.PaymentDTO{
+	liquidationAccount := domain.Account{
 		Special:       true,
 		AccountNumber: config.LiquidationAccountNumber,
 		Currency:      "BYN",

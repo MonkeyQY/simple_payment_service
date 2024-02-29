@@ -13,7 +13,7 @@ var (
 
 // Imitation of the DB
 type DB struct {
-	Accounts map[string]domain.PaymentDTO
+	Accounts map[string]domain.Account
 }
 
 func NewDB(config *configs.Config) *DB {
@@ -21,7 +21,7 @@ func NewDB(config *configs.Config) *DB {
 	// Once , чтобы не создавать несколько экземпляров и всегда обращаться к одной мок базе
 	once.Do(func() {
 		Instance = &DB{
-			Accounts: make(map[string]domain.PaymentDTO),
+			Accounts: make(map[string]domain.Account),
 		}
 	})
 	return Instance

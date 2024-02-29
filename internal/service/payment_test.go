@@ -21,7 +21,7 @@ func TestPaymentService_getAccounts(t *testing.T) {
 	}
 	config := configs.NewConfig()
 	repositoryInstance := repository.NewAccountRepository(db.NewDB(config))
-	acc1 := domain.PaymentDTO{
+	acc1 := domain.Account{
 		AccountNumber: "BY04CBDC36029110100040000000",
 		Balance:       0,
 		Active:        true,
@@ -32,7 +32,7 @@ func TestPaymentService_getAccounts(t *testing.T) {
 	}
 	_ = repositoryInstance.AddAccount(acc1)
 
-	acc2 := domain.PaymentDTO{
+	acc2 := domain.Account{
 		AccountNumber: "BY04CBDC36029110100040000001",
 		Balance:       0,
 		Active:        true,
@@ -47,8 +47,8 @@ func TestPaymentService_getAccounts(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   domain.PaymentDTO
-		want1  domain.PaymentDTO
+		want   domain.Account
+		want1  domain.Account
 		want2  bool
 	}{
 		{
@@ -92,8 +92,8 @@ func TestPaymentService_transactionValidation(t *testing.T) {
 		config     *configs.Config
 	}
 	type args struct {
-		accountFrom domain.PaymentDTO
-		accountTo   domain.PaymentDTO
+		accountFrom domain.Account
+		accountTo   domain.Account
 		sum         float64
 	}
 	tests := []struct {
@@ -110,7 +110,7 @@ func TestPaymentService_transactionValidation(t *testing.T) {
 				config:     &configs.Config{},
 			},
 			args: args{
-				accountFrom: domain.PaymentDTO{
+				accountFrom: domain.Account{
 					AccountNumber: "BY04CBDC36029110100040000000",
 					Balance:       100,
 					Active:        true,
@@ -118,7 +118,7 @@ func TestPaymentService_transactionValidation(t *testing.T) {
 					Limits:        false,
 					Special:       true,
 				},
-				accountTo: domain.PaymentDTO{
+				accountTo: domain.Account{
 					AccountNumber: "BY04CBDC36029110100040000001",
 					Balance:       100,
 					Active:        true,
@@ -138,14 +138,14 @@ func TestPaymentService_transactionValidation(t *testing.T) {
 				config:     &configs.Config{},
 			},
 			args: args{
-				accountFrom: domain.PaymentDTO{
+				accountFrom: domain.Account{
 					AccountNumber: "BY04CBDC36029110100040000000",
 					Balance:       100,
 					Active:        true,
 					Currency:      "BYN",
 					Limits:        false,
 				},
-				accountTo: domain.PaymentDTO{
+				accountTo: domain.Account{
 					AccountNumber: "BY04CBDC36029110100040000001",
 					Balance:       100,
 					Active:        true,
@@ -165,14 +165,14 @@ func TestPaymentService_transactionValidation(t *testing.T) {
 				config:     &configs.Config{},
 			},
 			args: args{
-				accountFrom: domain.PaymentDTO{
+				accountFrom: domain.Account{
 					AccountNumber: "BY04CBDC36029110100040000000",
 					Balance:       100,
 					Active:        false,
 					Currency:      "BYN",
 					Limits:        false,
 				},
-				accountTo: domain.PaymentDTO{
+				accountTo: domain.Account{
 					AccountNumber: "BY04CBDC36029110100040000001",
 					Balance:       100,
 					Active:        true,
@@ -191,14 +191,14 @@ func TestPaymentService_transactionValidation(t *testing.T) {
 				config:     &configs.Config{},
 			},
 			args: args{
-				accountFrom: domain.PaymentDTO{
+				accountFrom: domain.Account{
 					AccountNumber: "BY04CBDC36029110100040000000",
 					Balance:       0,
 					Active:        true,
 					Currency:      "BYN",
 					Limits:        false,
 				},
-				accountTo: domain.PaymentDTO{
+				accountTo: domain.Account{
 					AccountNumber: "BY04CBDC36029110100040000001",
 					Balance:       100,
 					Active:        true,

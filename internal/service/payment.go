@@ -7,8 +7,8 @@ import (
 )
 
 type PaymentRepository interface {
-	TransferMoney(accountFrom domain.PaymentDTO, accountTo domain.PaymentDTO) (bool, error)
-	GetAccount(accountNumber string) (domain.PaymentDTO, bool)
+	TransferMoney(accountFrom domain.Account, accountTo domain.Account) (bool, error)
+	GetAccount(accountNumber string) (domain.Account, bool)
 }
 
 type PaymentService struct {
@@ -23,7 +23,7 @@ func NewPaymentService(repository PaymentRepository) *PaymentService {
 }
 
 func (p *PaymentService) transactionValidation(
-	accountFrom, accountTo domain.PaymentDTO,
+	accountFrom, accountTo domain.Account,
 	sum float64,
 ) (bool, error) {
 
@@ -47,14 +47,14 @@ func (p *PaymentService) transactionValidation(
 func (p *PaymentService) getAccounts(
 	accountNumberFrom string,
 	accountNumberTo string,
-) (domain.PaymentDTO, domain.PaymentDTO, bool) {
+) (domain.Account, domain.Account, bool) {
 	accountFrom, ok := p.repository.GetAccount(accountNumberFrom)
 	if !ok {
-		return domain.PaymentDTO{}, domain.PaymentDTO{}, false
+		return domain.Account{}, domain.Account{}, false
 	}
 	accountTo, ok := p.repository.GetAccount(accountNumberTo)
 	if !ok {
-		return domain.PaymentDTO{}, domain.PaymentDTO{}, false
+		return domain.Account{}, domain.Account{}, false
 	}
 	return accountFrom, accountTo, true
 }

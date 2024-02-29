@@ -4,8 +4,8 @@ import "testPaymentSystem/internal/domain"
 
 // Account обьявляет методы, который должны быть для того, чтобы работать с Счетами пользователей
 type Account interface {
-	NewAccount() (domain.PaymentDTO, error)
-	GetAccounts() []domain.PaymentDTO
+	NewAccount() (domain.Account, error)
+	GetAccounts() []domain.Account
 	Replenishment(accountNumber string, sum float64) (float64, error)
 }
 
@@ -88,7 +88,7 @@ func (p *PaymentSystem) TransferWithMap(data map[string]interface{}) (bool, erro
 	return p.Transfer(accountNumberFrom, accountNumberTo, sum)
 }
 
-func (p *PaymentSystem) GetAllAccounts() []domain.PaymentDTO {
+func (p *PaymentSystem) GetAllAccounts() []domain.Account {
 	return p.accountService.GetAccounts()
 }
 

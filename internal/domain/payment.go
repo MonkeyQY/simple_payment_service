@@ -1,6 +1,6 @@
 package domain
 
-type PaymentDTO struct {
+type Account struct {
 	AccountNumber string
 	Balance       float64
 	Active        bool

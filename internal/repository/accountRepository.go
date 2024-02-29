@@ -18,22 +18,22 @@ func NewAccountRepository(db *db.DB) *AccountRepository {
 	}
 }
 
-func (d *AccountRepository) AddAccount(account domain.PaymentDTO) error {
+func (d *AccountRepository) AddAccount(account domain.Account) error {
 	account.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
 	d.Db.Accounts[account.AccountNumber] = account
 	return nil
 }
 
-func (d *AccountRepository) GetAccount(accountNumber string) (domain.PaymentDTO, bool) {
+func (d *AccountRepository) GetAccount(accountNumber string) (domain.Account, bool) {
 	account, ok := d.Db.Accounts[accountNumber]
 	if !ok {
-		return domain.PaymentDTO{}, false
+		return domain.Account{}, false
 	}
 	return account, true
 }
 
-func (d *AccountRepository) GetAccounts() []domain.PaymentDTO {
-	var accounts []domain.PaymentDTO
+func (d *AccountRepository) GetAccounts() []domain.Account {
+	var accounts []domain.Account
 	for _, account := range d.Db.Accounts {
 		accounts = append(accounts, account)
 	}
@@ -41,7 +41,7 @@ func (d *AccountRepository) GetAccounts() []domain.PaymentDTO {
 }
 
 func (d *AccountRepository) TransferMoney(
-	accountFrom, accountTo domain.PaymentDTO,
+	accountFrom, accountTo domain.Account,
 ) (bool, error) {
 	// В Реальной базе, мы откроем транзакцию и если одна из операций не прошла, то откатим транзакцию
 	// Работает это по-другому, но нужно понимать, что важно обработать ошибку
