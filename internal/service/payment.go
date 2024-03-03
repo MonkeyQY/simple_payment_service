@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"testPaymentSystem/configs"
 	"testPaymentSystem/internal/domain"
 )
 
@@ -13,7 +12,6 @@ type PaymentRepository interface {
 
 type PaymentService struct {
 	repository PaymentRepository
-	config     *configs.Config
 }
 
 func NewPaymentService(repository PaymentRepository) *PaymentService {
@@ -22,6 +20,7 @@ func NewPaymentService(repository PaymentRepository) *PaymentService {
 	}
 }
 
+// transactionValidation - валидация данных перед отправкой денег
 func (p *PaymentService) transactionValidation(
 	accountFrom, accountTo domain.Account,
 	sum float64,
@@ -44,6 +43,7 @@ func (p *PaymentService) transactionValidation(
 	return true, nil
 }
 
+// getAccounts - получение счетов для отправки денег по их номерам
 func (p *PaymentService) getAccounts(
 	accountNumberFrom string,
 	accountNumberTo string,
@@ -59,12 +59,12 @@ func (p *PaymentService) getAccounts(
 	return accountFrom, accountTo, true
 }
 
+// Send - отправка денег. Валидация, открытие транзакции, иммитация запроса в бд и  взакрытие транзакции
 func (p *PaymentService) Send(
 	accountNumberFrom string,
 	accountNumberTo string,
 	sum float64,
 ) (bool, error) {
-	// open transaction
 	accountFrom, accountTo, ok := p.getAccounts(accountNumberFrom, accountNumberTo)
 	if !ok {
 		return false, errors.New("Account not found")
@@ -73,6 +73,7 @@ func (p *PaymentService) Send(
 	if !isValid {
 		return false, err
 	}
+	// open transaction
 	accountFrom.Balance -= sum
 	accountTo.Balance += sum
 
@@ -80,6 +81,7 @@ func (p *PaymentService) Send(
 	if err != nil {
 		return false, err
 	}
+	// commit or rollback
 	// close transaction
 	return ok, nil
 }
